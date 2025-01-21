@@ -1,0 +1,28 @@
+---
+- name: Dependent file for Centos6
+  yum:
+    name: libselinux-python
+    state: installed
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6'
+
+- name: checking kibana already installed...
+  stat:
+    path: /etc/kibana
+  register: kibana
+
+- name: Downloading kibana package ...
+  get_url:
+    url: https://artifacts.elastic.co/downloads/kibana/kibana-{{ kibana_version_rpm }}-x86_64.rpm
+    dest: /opt/
+
+- name: Installing kibana ...
+  yum:
+    name: /opt/kibana-{{ kibana_version_rpm }}-x86_64.rpm
+    state: present
+
+- name: Adding kibana configuration file ...
+  template:
+    src: kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+  notify:
+    - Restart kibana

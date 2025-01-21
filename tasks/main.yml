@@ -1,0 +1,11 @@
+---
+# tasks file for kibana
+- name: Fetch OS
+  include_tasks: Debian.yml
+  when:
+    - ansible_os_family == "Debian"
+
+- name: Fetch OS
+  include_tasks: Redhat.yml
+  when:
+    - ansible_os_family == "RedHat"
